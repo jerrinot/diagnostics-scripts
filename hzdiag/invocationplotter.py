@@ -4,6 +4,7 @@ import plotly as py
 import pystache
 import os
 import formic
+from pkg_resources import resource_string
 
 class InvocationPlotter:
     def parse_invocations_from_diagnostics_file(self, filename):
@@ -73,7 +74,7 @@ class InvocationPlotter:
         series = self.create_series_map(state, top_operations)
         sorted_timestamps = sorted(state.keys())
         all_series = self.create_all_series(sorted_timestamps, series)
-        s = py.offline.plot(all_series, show_link=False, output_type='div')
+        s = py.offline.plot(all_series, show_link=False, output_type='div', include_plotlyjs=False)
         return s
 
 
@@ -88,6 +89,11 @@ class InvocationPlotter:
             files.setdefault(member,[]).append(currentFile)
         return files
 
+    def get_plotlyjs(self):
+        path = os.path.join('offline', 'plotly.min.js')
+        plotlyjs = resource_string('plotly', path).decode('utf-8')
+        return plotlyjs
+
 
     def plot(self, template):
         all_files = self.find_diagnostics_files()
@@ -96,4 +102,4 @@ class InvocationPlotter:
             member_files = all_files[current_member]
             plot = self.create_plot_html_markup_for_invocations(member_files)
             plots.append({'name': current_member, 'plot': plot})
-        print pystache.render(template, {'data': plots})
+        print pystache.render(template, {'data': plots, 'plotly' : self.get_plotlyjs()})

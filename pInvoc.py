@@ -6,6 +6,7 @@ invocation_history_template = """
 <html>
     <head>
         <title>Invocations Analysis</title>
+            <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         </head>
     <body>
         <h1> Invocation History per Member </h1>
