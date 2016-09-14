@@ -5,7 +5,7 @@ import pystache
 import os
 import formic
 
-class Hzdiag:
+class InvocationPlotter:
     def parse_invocations_from_diagnostics_file(self, filename):
         state = dict()
         inside_history = False
@@ -89,7 +89,7 @@ class Hzdiag:
         return files
 
 
-    def plotInvocations(self, template):
+    def plot(self, template):
         all_files = self.find_diagnostics_files()
         plots = []
         for current_member in all_files:

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from hzdiag.hzdiag import Hzdiag
+from hzdiag.invocationplotter import InvocationPlotter
 
 invocation_history_template = """
 <html>
@@ -17,4 +17,4 @@ invocation_history_template = """
 </html>
 """
 
-Hzdiag().plotInvocations(invocation_history_template)
+InvocationPlotter().plot(invocation_history_template)
