@@ -32,7 +32,7 @@ class Hzdiag:
         state = dict()
         for filename in filenames:
             current_state = parser(filename)
-            state = dict(current_state.items() + state.items())
+            state.update(current_state)
         return state
 
 
