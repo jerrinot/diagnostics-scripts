@@ -30,21 +30,29 @@ class PendingInvocationPlotter:
         return state
 
 
-    def create_all_series(self, sorted_timestamps, values) :
+    def create_all_series(self, all_states) :
         allSeries = []
-        currentSerie = {'x': sorted_timestamps, 'y': values, 'fill': 'tozeroy', 'name': 'Pending Invocations'}
-        allSeries.append(currentSerie)
+        for member_state in all_states:
+            member = member_state['member']
+            state = member_state['state']
+            sorted_timestamps = sorted(state.keys())
+            values = []
+            for timestamp in sorted_timestamps:
+                values.append(state[timestamp])
+            currentSerie = {'x': sorted_timestamps, 'y': values, 'fill': 'tozeroy', 'name': member}
+            allSeries.append(currentSerie)
         return allSeries
 
 
-    def create_plot_html_markup_for_invocations(self, files):
-        state = self.parse_files(files, self.parse_invocations_from_diagnostics_file)
-        sorted_timestamps = sorted(state.keys())
-        values = []
-        for datetime in sorted_timestamps:
-            values.append(state[datetime])
+    def create_plot_html_markup_for_invocations(self, all_files):
+        states = []
+        for member in all_files:
+            current_member_files = all_files[member]
+            state = self.parse_files(current_member_files, self.parse_invocations_from_diagnostics_file)
+            states.append({'member': member,
+                           'state': state})
 
-        all_series = self.create_all_series(sorted_timestamps, values)
+        all_series = self.create_all_series(states)
         s = py.offline.plot(all_series, show_link=False, output_type='div', include_plotlyjs=False)
         return s
 
@@ -68,9 +76,5 @@ class PendingInvocationPlotter:
 
     def plot(self, template):
         all_files = self.find_diagnostics_files()
-        plots = []
-        for current_member in all_files:
-            member_files = all_files[current_member]
-            plot = self.create_plot_html_markup_for_invocations(member_files)
-            plots.append({'name': current_member, 'plot': plot})
+        plots = [{'name': 'All Members', 'plot': self.create_plot_html_markup_for_invocations(all_files)}]
         print pystache.render(template, {'data': plots, 'plotly' : self.get_plotlyjs()})
