@@ -6,26 +6,30 @@ import os
 import formic
 from pkg_resources import resource_string
 
-class PendingInvocationPlotter:
-    def parse_invocations_from_diagnostics_file(self, filename):
+class SimpleMetricPlotter:
+    def __init__(self, metrics):
+        self.metrics = metrics
+
+
+    def parse_invocations_from_diagnostics_file(self, filename, metric):
         state = dict()
         for line in open(filename):
             line = line.strip()
             if "Metrics[" in line:
                 timestamp_string = parse("{} Metrics[", line)[0]
                 timestamp = datetime.strptime(timestamp_string, '%d-%m-%Y %I:%M:%S')
-            elif "operation.invocations.pending" in line:
-                line = parse("operation.invocations.pending={}", line)
+            elif metric in line:
+                line = parse(metric + "={}", line)
                 pending_string = line[0].replace(',','')
                 count = int(pending_string)
                 state[timestamp] = count
         return state
 
 
-    def parse_files(self, filenames, parser):
+    def parse_files(self, filenames, parser, metric):
         state = dict()
         for filename in filenames:
-            current_state = parser(filename)
+            current_state = parser(filename, metric)
             state.update(current_state)
         return state
 
@@ -44,11 +48,11 @@ class PendingInvocationPlotter:
         return allSeries
 
 
-    def create_plot_html_markup_for_invocations(self, all_files):
+    def create_plot_html_markup_for_invocations(self, all_files, metric):
         states = []
         for member in all_files:
             current_member_files = all_files[member]
-            state = self.parse_files(current_member_files, self.parse_invocations_from_diagnostics_file)
+            state = self.parse_files(current_member_files, self.parse_invocations_from_diagnostics_file, metric)
             states.append({'member': member,
                            'state': state})
 
@@ -76,5 +80,7 @@ class PendingInvocationPlotter:
 
     def plot(self, template):
         all_files = self.find_diagnostics_files()
-        plots = [{'name': 'All Members', 'plot': self.create_plot_html_markup_for_invocations(all_files)}]
+        plots = []
+        for metric in self.metrics:
+            plots.append({'name': metric, 'plot': self.create_plot_html_markup_for_invocations(all_files, metric)});
         print pystache.render(template, {'data': plots, 'plotly' : self.get_plotlyjs()})
