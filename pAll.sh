@@ -25,3 +25,5 @@ echo Plotting Pending Invocations
 pInvoc.py > ./$output_dir/pending_invocations.html
 echo Plotting Metrics
 pMetrics.py > ./$output_dir/metrics.html
+
+echo Metric plotting completed. Now you can server them over HTTP by running \"pPublish.py\"
