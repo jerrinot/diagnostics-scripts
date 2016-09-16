@@ -17,7 +17,7 @@ class SimpleMetricPlotter:
             line = line.strip()
             if "Metrics[" in line:
                 timestamp_string = parse("{} Metrics[", line)[0]
-                timestamp = datetime.strptime(timestamp_string, '%d-%m-%Y %I:%M:%S')
+                timestamp = datetime.strptime(timestamp_string, '%d-%m-%Y %H:%M:%S')
             elif metric in line:
                 line = parse(metric + "={}", line)
                 pending_string = line[0].replace(',','')
