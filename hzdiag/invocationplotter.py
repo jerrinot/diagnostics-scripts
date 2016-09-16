@@ -14,7 +14,7 @@ class InvocationPlotter:
             line = line.strip()
             if "Invocations[" in line:
                 timestamp_string = parse("{} Invocations[", line)[0]
-                timestamp = datetime.strptime(timestamp_string, '%d-%m-%Y %I:%M:%S')
+                timestamp = datetime.strptime(timestamp_string, '%d-%m-%Y %H:%M:%S')
                 state[timestamp] = dict()
             elif line == "History[":
                 inside_history = True
