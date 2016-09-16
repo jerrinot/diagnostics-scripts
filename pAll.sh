@@ -2,9 +2,6 @@
 
 output_dir=plots
 
-red='\033[0;31m'
-nc='\033[0m'
-
 if [ $# -gt 1 ]; then
     echo Usage: pAll.sh [force]
     exit 1
@@ -16,7 +13,7 @@ if [ $argument = "force" ]; then
 fi
 
 if [ -d "$output_dir" ]; then
-    echo "Directory ${red}`pwd`/$output_dir${nc} already exists. Start pass the start as \"pAll.sh force\" to regenerate plots"
+    echo "Directory `pwd`/$output_dir already exists. Start pass the start as \"pAll.sh force\" to regenerate plots"
     exit 2
 fi
 
