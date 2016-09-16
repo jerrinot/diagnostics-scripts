@@ -17,7 +17,7 @@ fi
 
 if [ -d "$output_dir" ]; then
     echo "Directory ${red}`pwd`/$output_dir${nc} already exists. Start pass the start as \"pAll.sh force\" to regenerate plots"
-    return 1
+    exit 2
 fi
 
 mkdir plots
